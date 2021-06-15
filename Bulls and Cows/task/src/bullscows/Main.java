@@ -6,11 +6,37 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         BullsAndCowsInit();
+
     }
 
     private static void BullsAndCowsInit() {
         int secretCode = 9305;
-        checkCowsAndBulls(secretCode);
+        System.out.println(createSecretCode());
+
+//        checkCowsAndBulls(secretCode);
+    }
+
+    private static String createSecretCode() {
+
+        Random random = new Random();
+        Scanner scanner = new Scanner(System.in);
+        int secretNumberCode = scanner.nextInt();
+        if (secretNumberCode > 10) {
+            return "Error: can't generate a secret number with a length of 11 because there aren't enough unique digits.";
+        }
+
+        String secretCode = "";
+
+        while (secretCode.length() < secretNumberCode) {
+            String digit = Integer.toString(random.nextInt(10));
+            if (secretCode.length() == 0 && digit.equals("0")) {
+                continue;
+            }
+            if (!secretCode.contains(digit)) {
+                secretCode += digit;
+            }
+        }
+        return "The random secret number is "+Integer.parseInt(secretCode);
     }
 
     private static void checkCowsAndBulls(int secretCode) {
@@ -39,17 +65,6 @@ public class Main {
         } else {
             System.out.format("Grade: None. The secret code is " + secretCode + ".");
         }
-    }
-
-    private static int createSecretCode() {
-        Random random = new Random();
-        String codeString = "";
-        for (int i = 0; i < 4; i++) {
-            String digit = Integer.toString(random.nextInt(10));
-            codeString += digit;
-        }
-        int secretNumber = Integer.parseInt(codeString);
-        return secretNumber;
     }
 
 }
