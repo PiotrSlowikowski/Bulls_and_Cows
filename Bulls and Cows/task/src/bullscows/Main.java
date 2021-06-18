@@ -10,10 +10,13 @@ public class Main {
     }
 
     private static void BullsAndCowsInit() {
-        System.out.println("Please, enter the secret code's length:");
         Scanner scanner = new Scanner(System.in);
-        int secretNumberCodeLength = scanner.nextInt();
-        String secretCode = createSecretCode(secretNumberCodeLength);
+        System.out.println("Input the length of the secret code:");
+        int secretCodeLength = scanner.nextInt();
+        System.out.println("Input the number of possible symbols in the code:");
+        int codePossibleSymbolsCount = scanner.nextInt();
+
+        String secretCode = createSecretCode(secretCodeLength, codePossibleSymbolsCount);
 
         if (!secretCode.isEmpty()) {
             roundRun(secretCode);
@@ -36,28 +39,41 @@ public class Main {
         }
     }
 
-    private static String createSecretCode(int secretNumberCodeLength) {
+    private static String createSecretCode(int secretNumberCodeLength, int codePossibleSymbolsCount) {
+
 
         Random random = new Random();
-
-
+        String alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
         String secretCode = "";
 
         while (secretCode.length() < secretNumberCodeLength) {
-            if (secretNumberCodeLength > 10) {
-                System.out.println("Error: can't generate a secret number with a length of 11 because there aren't enough unique digits.");
+            if (secretNumberCodeLength > 36) {
+                System.out.println("Error: can't generate a secret number with a length of >36 because there aren't enough unique digits.");
                 break;
             }
-            String digit = Integer.toString(random.nextInt(10));
-            if (secretCode.length() == 0 && digit.equals("0")) {
-                continue;
+            int randomIndex = random.nextInt(codePossibleSymbolsCount);
+            String symbol = Character.toString(alphabet.charAt(randomIndex));
+            if (!secretCode.contains(symbol)) {
+                secretCode += symbol;
             }
-            if (!secretCode.contains(digit)) {
-                secretCode += digit;
-            }
+        }
+
+        String hashes = "";
+        for (int i = 0; i < secretNumberCodeLength; i++) {
+            hashes += "*";
+        }
+
+
+        if (codePossibleSymbolsCount <= 9) {
+            System.out.println("The secret is prepared: " + hashes + " (0-" + alphabet.charAt(codePossibleSymbolsCount) + ").");
+        } else if (codePossibleSymbolsCount == 10) {
+            System.out.println("The secret is prepared: " + hashes + " (0-9).");
+        } else {
+            System.out.println("The secret is prepared: " + hashes + " (0-9, " + "a-" + alphabet.charAt(codePossibleSymbolsCount - 1) + ").");
         }
         return secretCode;
     }
+
 
     private static String checkCowsAndBulls(String secretCode, String codeGuess) {
         int bullsCounter = 0;
@@ -73,7 +89,11 @@ public class Main {
                 }
             }
         }
+        return printScore(secretCode, bullsCounter, cowsCounter);
 
+    }
+
+    private static String printScore(String secretCode, int bullsCounter, int cowsCounter) {
         if (bullsCounter == secretCode.length()) {
             System.out.println(bullsCounter + " bulls");
             return "Congratulations! You guessed the secret code.";
@@ -87,5 +107,6 @@ public class Main {
             return "Grade: None. The secret code is " + secretCode + ".";
         }
     }
+
 
 }
